@@ -32,7 +32,7 @@ def load_current_resource
   @current_resource.args(@new_resource.args)
   @current_resource.package(@new_resource.package)
   @current_resource.exists = true if package_exists?(@current_resource.package, @current_resource.version)
-  @current_resource.upgradeable = true if upgradeable?(@current_resource.package)
+  @current_resource.upgradeable = true if upgradeable?(@current_resource.package, @current_resource.version)
 #  @current_resource.installed = true if package_installed?(@current_resource.package)
 end
 
@@ -107,8 +107,9 @@ def package_exists?(name, version)
   end
 end
 
-def upgradeable?(name)
-  if @current_resource.exists
+def upgradeable?(name, version)
+  Chef::Log.debug("Checking upgradable for '#{name}'")
+  if @current_resource.exists && version
     return false
   elsif package_installed?(name)
     Chef::Log.debug("Checking to see if this chocolatey package is installed/upgradable: '#{name}'")
