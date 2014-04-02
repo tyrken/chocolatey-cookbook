@@ -32,6 +32,14 @@ file 'cygwin log' do
   action :delete
 end
 
-chocolatey 'chocolatey' do
-  action :upgrade if node['chocolatey']['upgrade']
+# chocolatey 'chocolatey' do
+#   action :upgrade 
+# end
+
+if node['chocolatey']['upgrade']
+  batch "updating chocolatey to latest" do
+    code "#{::File.join(node['chocolatey']['bin_path'], "chocolatey.bat")} update"
+    # Hack, hack, hack!
+    returns [0, 123]
+  end
 end
