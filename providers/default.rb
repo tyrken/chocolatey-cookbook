@@ -140,17 +140,20 @@ end
 def install(name)
   batch "install package #{name}" do
     code "#{::File.join(node['chocolatey']['bin_path'], "chocolatey.bat")} install #{name} #{cmd_args}"
+    timeout 7200
   end
 end
 
 def upgrade(name)
   batch "updating #{name} to latest" do
     code "#{::File.join(node['chocolatey']['bin_path'], "chocolatey.bat")} update #{name} #{cmd_args}"
+    timeout 7200
   end
 end
 
 def install_version(name, version)
   batch "install package #{name} to version #{version}" do
     code "#{::File.join(node['chocolatey']['bin_path'], "chocolatey.bat")} install #{name} -version #{version} #{cmd_args}"
+    timeout 7200
   end
 end
