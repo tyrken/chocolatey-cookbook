@@ -32,6 +32,11 @@ file 'cygwin log' do
   action :delete
 end
 
+# Helps work around bug https://github.com/chocolatey/chocolatey/issues/371
+env 'ChocolateyInstall' do
+  value node['chocolatey']['path']
+end
+
 # chocolatey 'chocolatey' do
 #   action :upgrade 
 # end
