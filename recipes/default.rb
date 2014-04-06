@@ -32,16 +32,22 @@ file 'cygwin log' do
   action :delete
 end
 
+#def win_friendly_path(path)
+#  path.gsub(::File::SEPARATOR, ::File::ALT_SEPARATOR) if path
+#end
+#::Chef::Recipe.send(:include, Windows::Helper)
+::Chef::Resource.send(:include, Windows::Helper)
+
 # Helps work around bug https://github.com/chocolatey/chocolatey/issues/371
 Chef::Log.info("ChocolateyInstall - original value = "+ENV["ChocolateyInstall"])
 env 'ChocolateyInstall' do
-  value node['chocolatey']['path']
+  value win_friendly_path(node['chocolatey']['path'])
 end
-ruby_block "set ChocolateyInstall immediatly"
-  Chef::Log.info("ChocolateyInstall - old value = "+ENV["ChocolateyInstall"])
-  ENV["ChocolateyInstall"] = node['chocolatey']['path']
-  Chef::Log.info("ChocolateyInstall - set value = "+ENV["ChocolateyInstall"])
-end
+# ruby_block "set ChocolateyInstall immediatly" do
+#   Chef::Log.info("ChocolateyInstall - old value = "+ENV["ChocolateyInstall"])
+#   ENV["ChocolateyInstall"] = win_friendly_path(node['chocolatey']['path'])
+#   Chef::Log.info("ChocolateyInstall - set value = "+ENV["ChocolateyInstall"])
+# end
 
 # chocolatey 'chocolatey' do
 #   action :upgrade 
@@ -49,7 +55,7 @@ end
 
 if node['chocolatey']['upgrade']
   batch "updating chocolatey to latest" do
-    code "#{::File.join(node['chocolatey']['bin_path'], "chocolatey.bat")} update"
+    code "#{win_friendly_path(::File.join(node['chocolatey']['bin_path'], "chocolatey.bat"))} update"
     # Hack, hack, hack!
     returns [0, 123]
   end
