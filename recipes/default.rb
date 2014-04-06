@@ -33,8 +33,14 @@ file 'cygwin log' do
 end
 
 # Helps work around bug https://github.com/chocolatey/chocolatey/issues/371
+Chef::Log.info("ChocolateyInstall - original value = "+ENV["ChocolateyInstall"])
 env 'ChocolateyInstall' do
   value node['chocolatey']['path']
+end
+ruby_block "set ChocolateyInstall immediatly"
+  Chef::Log.info("ChocolateyInstall - old value = "+ENV["ChocolateyInstall"])
+  ENV["ChocolateyInstall"] = node['chocolatey']['path']
+  Chef::Log.info("ChocolateyInstall - set value = "+ENV["ChocolateyInstall"])
 end
 
 # chocolatey 'chocolatey' do
