@@ -34,7 +34,6 @@ def load_current_resource
   @current_resource.exists = true if package_exists?(@current_resource.package, @current_resource.version)
   @current_resource.upgradeable = true if upgradeable?(@current_resource.package, @current_resource.version)
 #  @current_resource.installed = true if package_installed?(@current_resource.package)
-  Chef::Log.info "Timeout = #{ @new_resource.timeout }"
 end
 
 action :install do
@@ -141,20 +140,20 @@ end
 def install(name)
   batch "install package #{name}" do
     code "#{::File.join(node['chocolatey']['bin_path'], "chocolatey.bat")} install #{name} #{cmd_args}"
-    timeout timeout
+    timeout 7200
   end
 end
 
 def upgrade(name)
   batch "updating #{name} to latest" do
     code "#{::File.join(node['chocolatey']['bin_path'], "chocolatey.bat")} update #{name} #{cmd_args}"
-    timeout timeout
+    timeout 7200
   end
 end
 
 def install_version(name, version)
   batch "install package #{name} to version #{version}" do
     code "#{::File.join(node['chocolatey']['bin_path'], "chocolatey.bat")} install #{name} -version #{version} #{cmd_args}"
-    timeout timeout
+    timeout 7200
   end
 end
