@@ -39,7 +39,7 @@ end
 ::Chef::Resource.send(:include, Windows::Helper)
 
 # Helps work around bug https://github.com/chocolatey/chocolatey/issues/371
-Chef::Log.info("ChocolateyInstall - original value = "+ENV["ChocolateyInstall"])
+Chef::Log.info("ChocolateyInstall - original value = "+ENV["ChocolateyInstall"].to_s)
 env 'ChocolateyInstall' do
   value win_friendly_path(node['chocolatey']['path'])
 end
