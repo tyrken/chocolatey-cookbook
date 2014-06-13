@@ -67,28 +67,24 @@ action :remove do
 end
 
 def cmd_args
-  output = '-debug'
+  output = ''
   output += " -source #{@current_resource.source}" if @current_resource.source
   output += " -ia '#{@current_resource.args}'" unless @current_resource.args.to_s.empty?
   output
 end
 
 def package_installed?(name)
-  Chef::Log.debug("package_installed? #{name}")
   cmd = Mixlib::ShellOut.new("#{::File.join(node['chocolatey']['bin_path'], "chocolatey.bat")} version #{name} -localonly #{cmd_args}")
   cmd.run_command
   if cmd.stdout.include?('no version')
-    Chef::Log.debug("not package_installed?")
     return false
   else
-    Chef::Log.debug("YES package_installed?")
     return true
   end
 #  software = cmd.stdout.split("\r\n").inject({}) {|h,s| v,k = s.split(":"); h[String(v).strip]=String(k).strip; h}
 end
 
 def package_exists?(name, version)
-  Chef::Log.debug("package_exists? #{name} #{version}")
   if package_installed?(name)
     if version
       cmd = Mixlib::ShellOut.new("#{::File.join(node['chocolatey']['bin_path'], "chocolatey.bat")} version #{name} -localonly #{cmd_args}")
@@ -99,36 +95,28 @@ def package_exists?(name, version)
         h
       end
       if software[name] == version
-        Chef::Log.debug("package_exists => soft = #{version}")
         return true
       else
-        Chef::Log.debug("package_exists => soft != #{version}")
         return false
       end
     else
-      Chef::Log.debug("package_exists => no version #{version}")
       return true
     end
   else
-    Chef::Log.debug("package_exists => not installed")
     return false
   end
 end
 
 def upgradeable?(name, version)
-  Chef::Log.debug("Checking upgradable for '#{name}'")
   if @current_resource.exists && version
-    Chef::Log.debug("False as exists")
     return false
   elsif package_installed?(name)
     Chef::Log.debug("Checking to see if this chocolatey package is installed/upgradable: '#{name}'")
     cmd = Mixlib::ShellOut.new("#{::File.join(node['chocolatey']['bin_path'], "chocolatey.bat")} version #{name} #{cmd_args}")
     cmd.run_command
     if cmd.stdout.include?('Latest version installed')
-      Chef::Log.debug('Latest version installed')
       return false
     else
-      Chef::Log.debug('Not Latest - upgradable')
       return true
     end
   else
@@ -140,20 +128,17 @@ end
 def install(name)
   batch "install package #{name}" do
     code "#{::File.join(node['chocolatey']['bin_path'], "chocolatey.bat")} install #{name} #{cmd_args}"
-    #timeout 7200
   end
 end
 
 def upgrade(name)
   batch "updating #{name} to latest" do
     code "#{::File.join(node['chocolatey']['bin_path'], "chocolatey.bat")} update #{name} #{cmd_args}"
-    #timeout 7200
   end
 end
 
 def install_version(name, version)
   batch "install package #{name} to version #{version}" do
     code "#{::File.join(node['chocolatey']['bin_path'], "chocolatey.bat")} install #{name} -version #{version} #{cmd_args}"
-    #timeout 7200
   end
 end

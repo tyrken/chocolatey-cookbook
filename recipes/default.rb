@@ -32,18 +32,19 @@ file 'cygwin log' do
   action :delete
 end
 
-# Helps work around bug https://github.com/chocolatey/chocolatey/issues/371
+# Helps work around bug https://github.com/chocolatey/chocolatey/issues/371 in 0.9.8.23
 ::Chef::Resource.send(:include, Windows::Helper)
 win_chocolatey_install = win_friendly_path(node['chocolatey']['path'])
-env 'ChocolateyInstall' do
-  value win_chocolatey_install
+batch "Set machine-wide ChocolateyInstall" do
+  code "setx ChocolateyInstall '' && setx -m ChocolateyInstall '#win_chocolatey_install'"
+  only_if do ENV["ChocolateyInstall"] != win_chocolatey_install end
 end
 ENV["ChocolateyInstall"] = win_chocolatey_install
 
 if node['chocolatey']['upgrade']
+  # Updating can succeed but return error 123 (The filename, directory name, or volume label syntax is incorrect)
   batch "updating chocolatey to latest" do
     code "#{win_friendly_path(::File.join(node['chocolatey']['bin_path'], "chocolatey.bat"))} update"
-    # Hack, hack, hack!
     returns [0, 123]
   end
 end
