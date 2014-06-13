@@ -35,11 +35,12 @@ end
 # Helps work around bug https://github.com/chocolatey/chocolatey/issues/371 in 0.9.8.23
 ::Chef::Resource.send(:include, Windows::Helper)
 win_chocolatey_install = win_friendly_path(node['chocolatey']['path'])
-batch "Set machine-wide ChocolateyInstall" do
-  code "setx -m ChocolateyInstall '#{win_chocolatey_install}'"
-  only_if do ENV["ChocolateyInstall"] != win_chocolatey_install end
+if ENV["ChocolateyInstall"] != win_chocolatey_install
+  batch "Set machine-wide ChocolateyInstall" do
+    code "setx -m ChocolateyInstall '#{win_chocolatey_install}'"
+  end
+  ENV["ChocolateyInstall"] = win_chocolatey_install
 end
-ENV["ChocolateyInstall"] = win_chocolatey_install
 
 if node['chocolatey']['upgrade']
   # Updating can succeed but return error 123 (The filename, directory name, or volume label syntax is incorrect)
