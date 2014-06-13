@@ -36,7 +36,7 @@ end
 ::Chef::Resource.send(:include, Windows::Helper)
 win_chocolatey_install = win_friendly_path(node['chocolatey']['path'])
 batch "Set machine-wide ChocolateyInstall" do
-  code "setx ChocolateyInstall '' && setx -m ChocolateyInstall '#win_chocolatey_install'"
+  code "setx -m ChocolateyInstall '#{win_chocolatey_install}'"
   only_if do ENV["ChocolateyInstall"] != win_chocolatey_install end
 end
 ENV["ChocolateyInstall"] = win_chocolatey_install
