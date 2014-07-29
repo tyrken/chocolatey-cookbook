@@ -37,7 +37,7 @@ end
 win_chocolatey_install = win_friendly_path(node['chocolatey']['path'])
 if ENV["ChocolateyInstall"] != win_chocolatey_install
   batch "Set machine-wide ChocolateyInstall" do
-    code "setx -m ChocolateyInstall '#{win_chocolatey_install}'"
+    code "setx -m ChocolateyInstall \"#{win_chocolatey_install}\""
   end
   ENV["ChocolateyInstall"] = win_chocolatey_install
 end
