@@ -42,10 +42,10 @@ if ENV["ChocolateyInstall"] != win_chocolatey_install
   ENV["ChocolateyInstall"] = win_chocolatey_install
 end
 
-if node['chocolatey']['upgrade']
-  # Updating can succeed but return error 123 (The filename, directory name, or volume label syntax is incorrect)
-  batch "updating chocolatey to latest" do
-    code "#{win_friendly_path(::File.join(node['chocolatey']['bin_path'], "chocolatey.bat"))} update"
-    returns [0, 123]
-  end
-end
+# if node['chocolatey']['upgrade']
+#   # Updating can succeed but return error 123 (The filename, directory name, or volume label syntax is incorrect)
+#   batch "updating chocolatey to latest" do
+#     code "#{win_friendly_path(::File.join(node['chocolatey']['bin_path'], "chocolatey.bat"))} update"
+#     returns [0, 123]
+#   end
+# end
