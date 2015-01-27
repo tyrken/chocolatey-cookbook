@@ -44,7 +44,7 @@ file 'cygwin log' do
   action :delete
 end
 
-chocolatey 'chocolatey' do
-  action :upgrade
-  only_if { node['chocolatey']['upgrade'] }
-end
+# chocolatey 'chocolatey' do
+#   action :upgrade
+#   only_if { node['chocolatey']['upgrade'] }
+# end
